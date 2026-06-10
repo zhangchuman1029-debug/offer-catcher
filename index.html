@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offer 捕手 | 学生求职匹配智能体</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">AI Career Agent Demo</p>
+          <h1>Offer 捕手</h1>
+          <p class="subtitle">从职业画像、岗位匹配、简历优化到成长路线图，一次完成学生求职决策。</p>
+        </div>
+        <div class="hero-metrics" aria-label="demo summary">
+          <div><strong id="topScore">92%</strong><span>当前最佳匹配</span></div>
+          <div><strong>4</strong><span>能力维度</span></div>
+          <div><strong>7天</strong><span>行动计划</span></div>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <aside class="input-panel" aria-label="student profile input">
+          <div class="panel-title">
+            <span>学生输入</span>
+            <button id="loadSample" type="button">载入示例</button>
+          </div>
+
+          <label>
+            简历 / 自我介绍
+            <textarea id="resumeInput" rows="9"></textarea>
+          </label>
+
+          <label>
+            项目经历
+            <textarea id="projectInput" rows="7"></textarea>
+          </label>
+
+          <label>
+            技能关键词
+            <input id="skillInput" type="text" />
+          </label>
+
+          <label>
+            兴趣方向
+            <input id="interestInput" type="text" />
+          </label>
+
+          <button class="primary-action" id="analyzeBtn" type="button">生成求职匹配报告</button>
+        </aside>
+
+        <section class="result-panel">
+          <nav class="stage-tabs" aria-label="analysis stages">
+            <button class="tab active" data-tab="profile" type="button">职业画像</button>
+            <button class="tab" data-tab="jobs" type="button">岗位匹配</button>
+            <button class="tab" data-tab="resume" type="button">简历优化</button>
+            <button class="tab" data-tab="roadmap" type="button">成长路线</button>
+          </nav>
+
+          <section class="tab-page active" id="profile">
+            <div class="section-head">
+              <p class="eyebrow">Stage 01</p>
+              <h2>AI 职业咨询师画像</h2>
+            </div>
+            <div class="score-grid" id="abilityGrid"></div>
+            <div class="two-column">
+              <article class="insight-card">
+                <h3>适合方向</h3>
+                <ul id="fitList"></ul>
+              </article>
+              <article class="insight-card muted">
+                <h3>不推荐方向</h3>
+                <ul id="avoidList"></ul>
+              </article>
+            </div>
+          </section>
+
+          <section class="tab-page" id="jobs">
+            <div class="section-head">
+              <p class="eyebrow">Stage 02</p>
+              <h2>岗位库智能匹配</h2>
+            </div>
+            <div class="job-list" id="jobList"></div>
+          </section>
+
+          <section class="tab-page" id="resume">
+            <div class="section-head">
+              <p class="eyebrow">Stage 03</p>
+              <h2>面向目标岗位的简历优化</h2>
+            </div>
+            <div class="ats-card">
+              <div>
+                <span class="small-label">ATS 风险</span>
+                <strong id="atsRisk">中</strong>
+              </div>
+              <div>
+                <span class="small-label">缺失关键词</span>
+                <p id="missingKeywords"></p>
+              </div>
+            </div>
+            <div class="rewrite-box">
+              <div>
+                <span class="small-label">原文</span>
+                <p id="beforeText"></p>
+              </div>
+              <div>
+                <span class="small-label">建议改写</span>
+                <p id="afterText"></p>
+              </div>
+            </div>
+            <article class="insight-card">
+              <h3>模拟 HR 视角</h3>
+              <p id="hrView"></p>
+            </article>
+          </section>
+
+          <section class="tab-page" id="roadmap">
+            <div class="section-head">
+              <p class="eyebrow">Stage 04</p>
+              <h2>求职成长路线图</h2>
+            </div>
+            <div class="gap-strip" id="gapStrip"></div>
+            <div class="timeline" id="timeline"></div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
