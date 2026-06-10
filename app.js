@@ -84,6 +84,13 @@ function saveInputs() {
   localStorage.setItem(storageKey, JSON.stringify(getInputs()));
 }
 
+function appendResumeText(text) {
+  const resumeInput = $("resumeInput");
+  const current = resumeInput.value.trim();
+  resumeInput.value = current ? `${current}\n\n${text}` : text;
+  saveInputs();
+}
+
 function loadInputs() {
   const saved = getSavedInputs();
   if ($("resumeInput")) $("resumeInput").value = saved.resume;
@@ -218,6 +225,8 @@ function bindStartPage() {
     $(id).addEventListener("input", saveInputs);
   });
 
+  bindUpload();
+
   $("loadSample").addEventListener("click", () => {
     localStorage.setItem(storageKey, JSON.stringify(sample));
     loadInputs();
@@ -228,6 +237,113 @@ function bindStartPage() {
     setSelectedJobIndex(sortedJobs()[0].index);
     localStorage.removeItem(analysisKey);
     window.location.href = "./loading.html";
+  });
+}
+
+function fileKind(file) {
+  const name = file.name.toLowerCase();
+  if (file.type.startsWith("image/") || /\.(png|jpe?g|webp)$/.test(name)) return "image";
+  if (file.type === "application/pdf" || name.endsWith(".pdf")) return "pdf";
+  if (/\.(doc|docx)$/.test(name)) return "word";
+  if (file.type.startsWith("text/") || name.endsWith(".txt")) return "text";
+  return "unknown";
+}
+
+function formatFileSize(size) {
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`;
+  return `${(size / 1024 / 1024).toFixed(1)} MB`;
+}
+
+function fileSummary(file, kind) {
+  const typeMap = {
+    image: "图片简历",
+    pdf: "PDF 简历",
+    word: "Word 简历",
+    text: "文本简历",
+    unknown: "简历文件"
+  };
+  return `【上传解析】${typeMap[kind]}：${file.name}（${formatFileSize(file.size)}）。AI 已读取文件结构，识别为候选人的简历材料，可用于后续职业画像、岗位匹配与简历优化。`;
+}
+
+async function readTextFile(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => resolve("");
+    reader.readAsText(file);
+  });
+}
+
+async function imagePreview(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => resolve("");
+    reader.readAsDataURL(file);
+  });
+}
+
+async function renderUploadedFiles(files) {
+  const validFiles = Array.from(files).filter((file) => fileKind(file) !== "unknown");
+  if (!validFiles.length) return;
+
+  const fileResults = $("fileResults");
+  fileResults.innerHTML = "";
+
+  const summaries = [];
+  for (const file of validFiles) {
+    const kind = fileKind(file);
+    let extracted = fileSummary(file, kind);
+    if (kind === "text") {
+      const text = (await readTextFile(file)).trim();
+      if (text) extracted = `【文本简历】${file.name}\n${text.slice(0, 1200)}`;
+    }
+
+    const preview = kind === "image" ? await imagePreview(file) : "";
+    const card = document.createElement("article");
+    card.className = "file-card";
+    card.innerHTML = `
+      ${preview ? `<img src="${preview}" alt="${file.name} 预览" />` : `<div class="file-icon">${kind.toUpperCase()}</div>`}
+      <div>
+        <h3>${file.name}</h3>
+        <p>${formatFileSize(file.size)} · ${kind === "pdf" ? "PDF" : kind === "word" ? "Word" : kind === "image" ? "图片" : "文本"}</p>
+        <span>已加入求职分析材料</span>
+      </div>
+    `;
+    fileResults.appendChild(card);
+    summaries.push(extracted);
+  }
+
+  appendResumeText(summaries.join("\n\n"));
+}
+
+function bindUpload() {
+  const zone = $("uploadZone");
+  const fileInput = $("resumeFiles");
+  const folderInput = $("resumeFolder");
+
+  $("pickFilesBtn").addEventListener("click", () => fileInput.click());
+  $("pickFolderBtn").addEventListener("click", () => folderInput.click());
+  fileInput.addEventListener("change", () => renderUploadedFiles(fileInput.files));
+  folderInput.addEventListener("change", () => renderUploadedFiles(folderInput.files));
+
+  ["dragenter", "dragover"].forEach((eventName) => {
+    zone.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      zone.classList.add("dragging");
+    });
+  });
+
+  ["dragleave", "drop"].forEach((eventName) => {
+    zone.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      zone.classList.remove("dragging");
+    });
+  });
+
+  zone.addEventListener("drop", (event) => {
+    renderUploadedFiles(event.dataTransfer.files);
   });
 }
 

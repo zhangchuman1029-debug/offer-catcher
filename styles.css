@@ -223,6 +223,118 @@ h1 {
   margin-top: 22px;
 }
 
+.upload-zone {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 18px;
+  padding: 22px;
+  border: 1px dashed rgba(90, 168, 255, 0.42);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 8% 20%, rgba(255, 255, 255, 0.9), transparent 20%),
+    rgba(236, 248, 255, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.upload-zone.dragging {
+  transform: translateY(-2px);
+  border-color: rgba(96, 215, 231, 0.9);
+  background: rgba(231, 255, 247, 0.72);
+}
+
+.upload-zone h2 {
+  margin: 0 0 8px;
+  color: #1e4565;
+  font-size: 26px;
+}
+
+.upload-zone p:not(.eyebrow) {
+  margin-bottom: 0;
+  color: #4e6d86;
+}
+
+.upload-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.ghost-action {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(90, 168, 255, 0.26);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #2f628c;
+  cursor: pointer;
+  font-weight: 900;
+  box-shadow: 0 10px 24px rgba(90, 168, 255, 0.1);
+}
+
+.file-results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.file-card {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow: var(--soft-shadow);
+}
+
+.file-card img,
+.file-icon {
+  width: 76px;
+  height: 76px;
+  border-radius: 18px;
+}
+
+.file-card img {
+  object-fit: cover;
+}
+
+.file-icon {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(90, 168, 255, 0.18), rgba(96, 215, 231, 0.28));
+  color: #3373a8;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.file-card h3 {
+  overflow: hidden;
+  margin-bottom: 6px;
+  color: #1e4565;
+  font-size: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-card p {
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.file-card span {
+  color: #3b987d;
+  font-size: 13px;
+  font-weight: 800;
+}
+
 .input-panel,
 .result-panel {
   border-radius: 30px;
@@ -245,6 +357,7 @@ h1 {
 }
 
 .panel-title button,
+.ghost-action,
 .tab {
   display: inline-flex;
   align-items: center;
@@ -262,6 +375,7 @@ h1 {
 }
 
 .panel-title button:hover,
+.ghost-action:hover,
 .tab:hover,
 .primary-action:hover {
   transform: translateY(-2px);
@@ -681,6 +795,8 @@ ul {
 
   .hero-metrics,
   .input-grid,
+  .upload-zone,
+  .file-results,
   .score-grid,
   .gap-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -703,6 +819,8 @@ ul {
 
   .hero-metrics,
   .input-grid,
+  .upload-zone,
+  .file-results,
   .score-grid,
   .two-column,
   .job-card,

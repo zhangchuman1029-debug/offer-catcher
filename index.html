@@ -27,6 +27,22 @@
           <button id="loadSample" type="button">载入示例</button>
         </div>
 
+        <section class="upload-zone" id="uploadZone" aria-label="resume upload area">
+          <div>
+            <p class="eyebrow">Resume Upload</p>
+            <h2>拖拽简历文件到这里</h2>
+            <p>支持 PDF、Word 文档和图片。也可以选择单个文件，或打开文件夹批量导入。</p>
+          </div>
+          <div class="upload-actions">
+            <button class="ghost-action" id="pickFilesBtn" type="button">选择文件</button>
+            <button class="ghost-action" id="pickFolderBtn" type="button">打开文件夹</button>
+          </div>
+          <input id="resumeFiles" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.txt" multiple hidden />
+          <input id="resumeFolder" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.txt" webkitdirectory multiple hidden />
+        </section>
+
+        <div class="file-results" id="fileResults" aria-live="polite"></div>
+
         <div class="input-grid">
           <label>
             简历 / 自我介绍
