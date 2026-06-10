@@ -21,34 +21,21 @@
         </div>
       </section>
 
-      <section class="workspace">
-        <aside class="input-panel" aria-label="student profile input">
-          <div class="panel-title">
-            <span>学生输入</span>
-            <button id="loadSample" type="button">载入示例</button>
+      <section class="result-panel page-panel">
+        <nav class="stage-tabs" aria-label="analysis pages">
+          <a class="tab" href="./index.html">重新分析</a>
+          <a class="tab" href="./profile.html">职业画像</a>
+          <a class="tab active" href="./jobs.html">岗位匹配</a>
+          <a class="tab" href="./resume.html">简历优化</a>
+          <a class="tab" href="./roadmap.html">成长路线</a>
+        </nav>
+
+        <section class="tab-page active" id="jobs">
+          <div class="section-head">
+            <p class="eyebrow">Stage 02</p>
+            <h2>岗位库智能匹配</h2>
           </div>
-          <label>简历 / 自我介绍<textarea id="resumeInput" rows="9"></textarea></label>
-          <label>项目经历<textarea id="projectInput" rows="7"></textarea></label>
-          <label>技能关键词<input id="skillInput" type="text" /></label>
-          <label>兴趣方向<input id="interestInput" type="text" /></label>
-          <button class="primary-action" id="analyzeBtn" type="button">更新岗位匹配</button>
-        </aside>
-
-        <section class="result-panel">
-          <nav class="stage-tabs" aria-label="analysis pages">
-            <a class="tab" href="./index.html">职业画像</a>
-            <a class="tab active" href="./jobs.html">岗位匹配</a>
-            <a class="tab" href="./resume.html">简历优化</a>
-            <a class="tab" href="./roadmap.html">成长路线</a>
-          </nav>
-
-          <section class="tab-page active" id="jobs">
-            <div class="section-head">
-              <p class="eyebrow">Stage 02</p>
-              <h2>岗位库智能匹配</h2>
-            </div>
-            <div class="job-list" id="jobList"></div>
-          </section>
+          <div class="job-list" id="jobList"></div>
         </section>
       </section>
     </main>

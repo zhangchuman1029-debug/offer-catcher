@@ -21,57 +21,44 @@
         </div>
       </section>
 
-      <section class="workspace">
-        <aside class="input-panel" aria-label="student profile input">
-          <div class="panel-title">
-            <span>学生输入</span>
-            <button id="loadSample" type="button">载入示例</button>
+      <section class="result-panel page-panel">
+        <nav class="stage-tabs" aria-label="analysis pages">
+          <a class="tab" href="./index.html">重新分析</a>
+          <a class="tab" href="./profile.html">职业画像</a>
+          <a class="tab" href="./jobs.html">岗位匹配</a>
+          <a class="tab active" href="./resume.html">简历优化</a>
+          <a class="tab" href="./roadmap.html">成长路线</a>
+        </nav>
+
+        <section class="tab-page active" id="resume">
+          <div class="section-head">
+            <p class="eyebrow">Stage 03</p>
+            <h2>面向目标岗位的简历优化</h2>
           </div>
-          <label>简历 / 自我介绍<textarea id="resumeInput" rows="9"></textarea></label>
-          <label>项目经历<textarea id="projectInput" rows="7"></textarea></label>
-          <label>技能关键词<input id="skillInput" type="text" /></label>
-          <label>兴趣方向<input id="interestInput" type="text" /></label>
-          <button class="primary-action" id="analyzeBtn" type="button">更新简历建议</button>
-        </aside>
-
-        <section class="result-panel">
-          <nav class="stage-tabs" aria-label="analysis pages">
-            <a class="tab" href="./index.html">职业画像</a>
-            <a class="tab" href="./jobs.html">岗位匹配</a>
-            <a class="tab active" href="./resume.html">简历优化</a>
-            <a class="tab" href="./roadmap.html">成长路线</a>
-          </nav>
-
-          <section class="tab-page active" id="resume">
-            <div class="section-head">
-              <p class="eyebrow">Stage 03</p>
-              <h2>面向目标岗位的简历优化</h2>
+          <div class="ats-card">
+            <div>
+              <span class="small-label">ATS 风险</span>
+              <strong id="atsRisk">中</strong>
             </div>
-            <div class="ats-card">
-              <div>
-                <span class="small-label">ATS 风险</span>
-                <strong id="atsRisk">中</strong>
-              </div>
-              <div>
-                <span class="small-label">缺失关键词</span>
-                <p id="missingKeywords"></p>
-              </div>
+            <div>
+              <span class="small-label">缺失关键词</span>
+              <p id="missingKeywords"></p>
             </div>
-            <div class="rewrite-box">
-              <div>
-                <span class="small-label">原文</span>
-                <p id="beforeText"></p>
-              </div>
-              <div>
-                <span class="small-label">建议改写</span>
-                <p id="afterText"></p>
-              </div>
+          </div>
+          <div class="rewrite-box">
+            <div>
+              <span class="small-label">原文</span>
+              <p id="beforeText"></p>
             </div>
-            <article class="insight-card">
-              <h3>模拟 HR 视角</h3>
-              <p id="hrView"></p>
-            </article>
-          </section>
+            <div>
+              <span class="small-label">建议改写</span>
+              <p id="afterText"></p>
+            </div>
+          </div>
+          <article class="insight-card">
+            <h3>模拟 HR 视角</h3>
+            <p id="hrView"></p>
+          </article>
         </section>
       </section>
     </main>

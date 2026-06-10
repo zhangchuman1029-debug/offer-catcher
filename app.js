@@ -52,10 +52,11 @@ const jobs = [
 
 const storageKey = "offerCatcherProfile";
 const selectedJobKey = "offerCatcherSelectedJob";
+const analysisKey = "offerCatcherAnalysisReady";
 const $ = (id) => document.getElementById(id);
 
 function getPage() {
-  return document.body.dataset.page || "profile";
+  return document.body.dataset.page || "start";
 }
 
 function getSelectedJobIndex() {
@@ -66,12 +67,16 @@ function setSelectedJobIndex(index) {
   localStorage.setItem(selectedJobKey, String(index));
 }
 
+function getSavedInputs() {
+  return JSON.parse(localStorage.getItem(storageKey) || "null") || sample;
+}
+
 function getInputs() {
   return {
-    resume: $("resumeInput")?.value || sample.resume,
-    projects: $("projectInput")?.value || sample.projects,
-    skills: $("skillInput")?.value || sample.skills,
-    interests: $("interestInput")?.value || sample.interests
+    resume: $("resumeInput")?.value || getSavedInputs().resume,
+    projects: $("projectInput")?.value || getSavedInputs().projects,
+    skills: $("skillInput")?.value || getSavedInputs().skills,
+    interests: $("interestInput")?.value || getSavedInputs().interests
   };
 }
 
@@ -80,11 +85,11 @@ function saveInputs() {
 }
 
 function loadInputs() {
-  const saved = JSON.parse(localStorage.getItem(storageKey) || "null") || sample;
-  $("resumeInput").value = saved.resume;
-  $("projectInput").value = saved.projects;
-  $("skillInput").value = saved.skills;
-  $("interestInput").value = saved.interests;
+  const saved = getSavedInputs();
+  if ($("resumeInput")) $("resumeInput").value = saved.resume;
+  if ($("projectInput")) $("projectInput").value = saved.projects;
+  if ($("skillInput")) $("skillInput").value = saved.skills;
+  if ($("interestInput")) $("interestInput").value = saved.interests;
 }
 
 function includesAny(text, words) {
@@ -93,7 +98,7 @@ function includesAny(text, words) {
 }
 
 function profileText() {
-  const input = getInputs();
+  const input = getSavedInputs();
   return `${input.resume} ${input.projects} ${input.skills} ${input.interests}`;
 }
 
@@ -170,7 +175,6 @@ function renderJobs() {
 
   document.querySelectorAll(".job-card").forEach((card) => {
     card.addEventListener("click", () => {
-      saveInputs();
       setSelectedJobIndex(Number(card.dataset.job));
       window.location.href = "./resume.html";
     });
@@ -208,10 +212,42 @@ function renderRoadmap() {
     .join("");
 }
 
-function renderPage() {
-  saveInputs();
-  renderHeroScore();
+function bindStartPage() {
+  loadInputs();
+  ["resumeInput", "projectInput", "skillInput", "interestInput"].forEach((id) => {
+    $(id).addEventListener("input", saveInputs);
+  });
 
+  $("loadSample").addEventListener("click", () => {
+    localStorage.setItem(storageKey, JSON.stringify(sample));
+    loadInputs();
+  });
+
+  $("analyzeBtn").addEventListener("click", () => {
+    saveInputs();
+    setSelectedJobIndex(sortedJobs()[0].index);
+    localStorage.removeItem(analysisKey);
+    window.location.href = "./loading.html";
+  });
+}
+
+function bindLoadingPage() {
+  const progress = $("loadingProgress");
+  const startedAt = Date.now();
+  const duration = 3200;
+  const timer = setInterval(() => {
+    const percent = Math.min(100, Math.round(((Date.now() - startedAt) / duration) * 100));
+    progress.style.width = `${percent}%`;
+    if (percent >= 100) {
+      clearInterval(timer);
+      localStorage.setItem(analysisKey, "ready");
+      window.location.href = "./profile.html";
+    }
+  }, 120);
+}
+
+function renderResultPage() {
+  renderHeroScore();
   const page = getPage();
   if (page === "profile") renderProfile();
   if (page === "jobs") renderJobs();
@@ -219,20 +255,7 @@ function renderPage() {
   if (page === "roadmap") renderRoadmap();
 }
 
-function bindInputs() {
-  ["resumeInput", "projectInput", "skillInput", "interestInput"].forEach((id) => {
-    $(id).addEventListener("input", saveInputs);
-  });
-}
-
-$("loadSample").addEventListener("click", () => {
-  localStorage.setItem(storageKey, JSON.stringify(sample));
-  loadInputs();
-  renderPage();
-});
-
-$("analyzeBtn").addEventListener("click", renderPage);
-
-loadInputs();
-bindInputs();
-renderPage();
+const page = getPage();
+if (page === "start") bindStartPage();
+if (page === "loading") bindLoadingPage();
+if (["profile", "jobs", "resume", "roadmap"].includes(page)) renderResultPage();

@@ -75,6 +75,8 @@ textarea {
 .hero,
 .input-panel,
 .result-panel,
+.input-home,
+.loading-panel,
 .score-card,
 .insight-card,
 .job-card,
@@ -199,6 +201,28 @@ h1 {
   margin-top: 24px;
 }
 
+.input-home {
+  margin-top: 24px;
+  padding: 24px;
+  border-radius: 30px;
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.input-grid label:nth-child(3),
+.input-grid label:nth-child(4) {
+  margin-bottom: 0;
+}
+
+.start-action {
+  width: min(420px, 100%);
+  margin-top: 22px;
+}
+
 .input-panel,
 .result-panel {
   border-radius: 30px;
@@ -296,6 +320,10 @@ input:focus {
 .result-panel {
   min-height: 760px;
   overflow: hidden;
+}
+
+.page-panel {
+  margin-top: 24px;
 }
 
 .stage-tabs {
@@ -547,6 +575,104 @@ ul {
   color: #6a8df0;
 }
 
+.loading-shell {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+}
+
+.loading-panel {
+  width: min(760px, 100%);
+  padding: 46px;
+  border-radius: 38px;
+  text-align: center;
+}
+
+.loading-panel h1 {
+  margin-bottom: 16px;
+  font-size: clamp(42px, 7vw, 78px);
+}
+
+.bubble-loader {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  margin: 0 auto 24px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 32% 28%, #ffffff 0%, rgba(96, 215, 231, 0.52) 38%, rgba(90, 168, 255, 0.22) 70%);
+  box-shadow:
+    inset 16px 14px 34px rgba(255, 255, 255, 0.82),
+    0 20px 55px rgba(90, 168, 255, 0.22);
+  animation: floatBubble 1.8s ease-in-out infinite;
+}
+
+.bubble-loader::before,
+.bubble-loader::after {
+  position: absolute;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.6);
+  content: "";
+}
+
+.bubble-loader::before {
+  top: 24px;
+  left: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.bubble-loader::after {
+  right: -18px;
+  bottom: 10px;
+  width: 42px;
+  height: 42px;
+}
+
+.loading-steps {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 26px 0 18px;
+}
+
+.loading-steps span {
+  padding: 8px 13px;
+  border: 1px solid rgba(90, 168, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.58);
+  color: #3373a8;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.loading-bar {
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(90, 168, 255, 0.14);
+}
+
+.loading-bar span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--mint), var(--blue), var(--pink));
+  transition: width 160ms ease;
+}
+
+@keyframes floatBubble {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-10px) scale(1.03);
+  }
+}
+
 @media (max-width: 1020px) {
   .hero,
   .workspace {
@@ -554,6 +680,7 @@ ul {
   }
 
   .hero-metrics,
+  .input-grid,
   .score-grid,
   .gap-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -575,6 +702,7 @@ ul {
   }
 
   .hero-metrics,
+  .input-grid,
   .score-grid,
   .two-column,
   .job-card,
