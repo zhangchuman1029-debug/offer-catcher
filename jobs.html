@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offer 捕手 | 岗位匹配</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-page="jobs">
+    <main class="app-shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Stage 02</p>
+          <h1>岗位匹配</h1>
+          <p class="subtitle">模拟 Boss、智联、实习僧岗位库，按能力证据、兴趣方向与岗位关键词输出可解释匹配。</p>
+        </div>
+        <div class="hero-metrics" aria-label="demo summary">
+          <div><strong id="topScore">92%</strong><span>当前最佳匹配</span></div>
+          <div><strong>4</strong><span>模拟岗位</span></div>
+          <div><strong>3</strong><span>风险提示</span></div>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <aside class="input-panel" aria-label="student profile input">
+          <div class="panel-title">
+            <span>学生输入</span>
+            <button id="loadSample" type="button">载入示例</button>
+          </div>
+          <label>简历 / 自我介绍<textarea id="resumeInput" rows="9"></textarea></label>
+          <label>项目经历<textarea id="projectInput" rows="7"></textarea></label>
+          <label>技能关键词<input id="skillInput" type="text" /></label>
+          <label>兴趣方向<input id="interestInput" type="text" /></label>
+          <button class="primary-action" id="analyzeBtn" type="button">更新岗位匹配</button>
+        </aside>
+
+        <section class="result-panel">
+          <nav class="stage-tabs" aria-label="analysis pages">
+            <a class="tab" href="./index.html">职业画像</a>
+            <a class="tab active" href="./jobs.html">岗位匹配</a>
+            <a class="tab" href="./resume.html">简历优化</a>
+            <a class="tab" href="./roadmap.html">成长路线</a>
+          </nav>
+
+          <section class="tab-page active" id="jobs">
+            <div class="section-head">
+              <p class="eyebrow">Stage 02</p>
+              <h2>岗位库智能匹配</h2>
+            </div>
+            <div class="job-list" id="jobList"></div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

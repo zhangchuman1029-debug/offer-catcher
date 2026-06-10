@@ -50,17 +50,55 @@ const jobs = [
   }
 ];
 
-const state = { selectedJob: 0 };
-
+const storageKey = "offerCatcherProfile";
+const selectedJobKey = "offerCatcherSelectedJob";
 const $ = (id) => document.getElementById(id);
+
+function getPage() {
+  return document.body.dataset.page || "profile";
+}
+
+function getSelectedJobIndex() {
+  return Number(localStorage.getItem(selectedJobKey) || "0");
+}
+
+function setSelectedJobIndex(index) {
+  localStorage.setItem(selectedJobKey, String(index));
+}
+
+function getInputs() {
+  return {
+    resume: $("resumeInput")?.value || sample.resume,
+    projects: $("projectInput")?.value || sample.projects,
+    skills: $("skillInput")?.value || sample.skills,
+    interests: $("interestInput")?.value || sample.interests
+  };
+}
+
+function saveInputs() {
+  localStorage.setItem(storageKey, JSON.stringify(getInputs()));
+}
+
+function loadInputs() {
+  const saved = JSON.parse(localStorage.getItem(storageKey) || "null") || sample;
+  $("resumeInput").value = saved.resume;
+  $("projectInput").value = saved.projects;
+  $("skillInput").value = saved.skills;
+  $("interestInput").value = saved.interests;
+}
 
 function includesAny(text, words) {
   const lower = text.toLowerCase();
   return words.some((word) => lower.includes(word.toLowerCase()));
 }
 
+function profileText() {
+  const input = getInputs();
+  return `${input.resume} ${input.projects} ${input.skills} ${input.interests}`;
+}
+
 function scoreStudent() {
-  const text = `${$("resumeInput").value} ${$("projectInput").value} ${$("skillInput").value} ${$("interestInput").value}`;
+  const text = profileText();
   return {
     "产品思维": 72 + (includesAny(text, ["用户", "产品", "PRD", "原型", "访谈"]) ? 13 : 0),
     "技术能力": 66 + (includesAny(text, ["Python", "FastAPI", "Cursor", "Claude", "Agent"]) ? 12 : 0),
@@ -70,10 +108,21 @@ function scoreStudent() {
 }
 
 function calcJobScore(job) {
-  const text = `${$("resumeInput").value} ${$("projectInput").value} ${$("skillInput").value} ${$("interestInput").value}`.toLowerCase();
+  const text = profileText().toLowerCase();
   const hits = job.tags.filter((tag) => text.includes(tag.toLowerCase())).length;
   const interestBoost = text.includes(job.title.slice(0, 4).toLowerCase()) ? 6 : 0;
   return Math.min(96, 72 + hits * 5 + interestBoost);
+}
+
+function sortedJobs() {
+  return jobs
+    .map((job, index) => ({ ...job, index, score: calcJobScore(job) }))
+    .sort((a, b) => b.score - a.score);
+}
+
+function renderHeroScore() {
+  const top = sortedJobs()[0];
+  if ($("topScore")) $("topScore").textContent = `${top.score}%`;
 }
 
 function renderProfile() {
@@ -98,16 +147,9 @@ function renderProfile() {
 }
 
 function renderJobs() {
-  const scored = jobs
-    .map((job, index) => ({ ...job, index, score: calcJobScore(job) }))
-    .sort((a, b) => b.score - a.score);
-
-  if (!scored.some((job) => job.index === state.selectedJob)) state.selectedJob = scored[0].index;
-  $("topScore").textContent = `${scored[0].score}%`;
-
-  $("jobList").innerHTML = scored
+  $("jobList").innerHTML = sortedJobs()
     .map((job) => `
-      <article class="job-card ${job.index === state.selectedJob ? "selected" : ""}" data-job="${job.index}">
+      <article class="job-card ${job.index === getSelectedJobIndex() ? "selected" : ""}" data-job="${job.index}">
         <div>
           <h3>${job.title}</h3>
           <div class="job-meta">
@@ -128,16 +170,22 @@ function renderJobs() {
 
   document.querySelectorAll(".job-card").forEach((card) => {
     card.addEventListener("click", () => {
-      state.selectedJob = Number(card.dataset.job);
-      renderAll();
-      activateTab("resume");
+      saveInputs();
+      setSelectedJobIndex(Number(card.dataset.job));
+      window.location.href = "./resume.html";
     });
   });
 }
 
+function selectedJob() {
+  return jobs[getSelectedJobIndex()] || jobs[0];
+}
+
 function renderResumeAdvice() {
-  const job = jobs[state.selectedJob];
-  $("atsRisk").textContent = calcJobScore(job) > 88 ? "低" : "中";
+  const job = selectedJob();
+  const risk = calcJobScore(job) > 88 ? "低" : "中";
+  $("atsRisk").textContent = risk;
+  if ($("atsRiskHero")) $("atsRiskHero").textContent = risk;
   $("missingKeywords").textContent = job.gaps.join("、");
   $("beforeText").textContent = "熟悉AI工具使用";
   $("afterText").textContent =
@@ -147,7 +195,7 @@ function renderResumeAdvice() {
 }
 
 function renderRoadmap() {
-  const job = jobs[state.selectedJob];
+  const job = selectedJob();
   $("gapStrip").innerHTML = job.gaps
     .map((gap) => `<div class="gap-item"><strong>${gap}</strong><span>目标岗位关键缺口</span></div>`)
     .join("");
@@ -160,34 +208,31 @@ function renderRoadmap() {
     .join("");
 }
 
-function renderAll() {
-  renderProfile();
-  renderJobs();
-  renderResumeAdvice();
-  renderRoadmap();
+function renderPage() {
+  saveInputs();
+  renderHeroScore();
+
+  const page = getPage();
+  if (page === "profile") renderProfile();
+  if (page === "jobs") renderJobs();
+  if (page === "resume") renderResumeAdvice();
+  if (page === "roadmap") renderRoadmap();
 }
 
-function activateTab(tabId) {
-  document.querySelectorAll(".tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.tab === tabId));
-  document.querySelectorAll(".tab-page").forEach((page) => page.classList.toggle("active", page.id === tabId));
+function bindInputs() {
+  ["resumeInput", "projectInput", "skillInput", "interestInput"].forEach((id) => {
+    $(id).addEventListener("input", saveInputs);
+  });
 }
-
-document.querySelectorAll(".tab").forEach((tab) => {
-  tab.addEventListener("click", () => activateTab(tab.dataset.tab));
-});
 
 $("loadSample").addEventListener("click", () => {
-  $("resumeInput").value = sample.resume;
-  $("projectInput").value = sample.projects;
-  $("skillInput").value = sample.skills;
-  $("interestInput").value = sample.interests;
-  renderAll();
+  localStorage.setItem(storageKey, JSON.stringify(sample));
+  loadInputs();
+  renderPage();
 });
 
-$("analyzeBtn").addEventListener("click", renderAll);
+$("analyzeBtn").addEventListener("click", renderPage);
 
-$("resumeInput").value = sample.resume;
-$("projectInput").value = sample.projects;
-$("skillInput").value = sample.skills;
-$("interestInput").value = sample.interests;
-renderAll();
+loadInputs();
+bindInputs();
+renderPage();

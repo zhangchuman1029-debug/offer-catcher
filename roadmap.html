@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offer 捕手 | 成长路线</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-page="roadmap">
+    <main class="app-shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Stage 04</p>
+          <h1>成长路线</h1>
+          <p class="subtitle">从目标岗位倒推能力缺口，把“岗位推荐”升级成可执行的职业成长计划。</p>
+        </div>
+        <div class="hero-metrics" aria-label="demo summary">
+          <div><strong id="topScore">92%</strong><span>目标岗位匹配</span></div>
+          <div><strong>3</strong><span>关键缺口</span></div>
+          <div><strong>8周</strong><span>学习周期</span></div>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <aside class="input-panel" aria-label="student profile input">
+          <div class="panel-title">
+            <span>学生输入</span>
+            <button id="loadSample" type="button">载入示例</button>
+          </div>
+          <label>简历 / 自我介绍<textarea id="resumeInput" rows="9"></textarea></label>
+          <label>项目经历<textarea id="projectInput" rows="7"></textarea></label>
+          <label>技能关键词<input id="skillInput" type="text" /></label>
+          <label>兴趣方向<input id="interestInput" type="text" /></label>
+          <button class="primary-action" id="analyzeBtn" type="button">更新成长路线</button>
+        </aside>
+
+        <section class="result-panel">
+          <nav class="stage-tabs" aria-label="analysis pages">
+            <a class="tab" href="./index.html">职业画像</a>
+            <a class="tab" href="./jobs.html">岗位匹配</a>
+            <a class="tab" href="./resume.html">简历优化</a>
+            <a class="tab active" href="./roadmap.html">成长路线</a>
+          </nav>
+
+          <section class="tab-page active" id="roadmap">
+            <div class="section-head">
+              <p class="eyebrow">Stage 04</p>
+              <h2>求职成长路线图</h2>
+            </div>
+            <div class="gap-strip" id="gapStrip"></div>
+            <div class="timeline" id="timeline"></div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
