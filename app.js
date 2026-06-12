@@ -50,6 +50,8 @@ const jobs = [
   }
 ];
 
+const importedJobsKey = "offerCatcherImportedJobs";
+
 const storageKey = "offerCatcherProfile";
 const selectedJobKey = "offerCatcherSelectedJob";
 const analysisKey = "offerCatcherAnalysisReady";
@@ -69,6 +71,14 @@ function setSelectedJobIndex(index) {
 
 function getSavedInputs() {
   return JSON.parse(localStorage.getItem(storageKey) || "null") || sample;
+}
+
+function getImportedJobs() {
+  return JSON.parse(localStorage.getItem(importedJobsKey) || "null") || [];
+}
+
+function setImportedJobs(items) {
+  localStorage.setItem(importedJobsKey, JSON.stringify(items));
 }
 
 function getInputs() {
@@ -127,7 +137,12 @@ function calcJobScore(job) {
 }
 
 function sortedJobs() {
-  return jobs
+  const jobSource = [...getImportedJobs(), ...jobs];
+  const filtered = $("highMatchOnly")?.checked
+    ? jobSource.filter((job) => calcJobScore(job) >= 85)
+    : jobSource;
+
+  return filtered
     .map((job, index) => ({ ...job, index, score: calcJobScore(job) }))
     .sort((a, b) => b.score - a.score);
 }
@@ -159,6 +174,13 @@ function renderProfile() {
 }
 
 function renderJobs() {
+  if ($("importStatus")) {
+    const imported = getImportedJobs().length;
+    $("importStatus").textContent = imported
+      ? `已导入 ${imported} 条来自 Boss Helper 的岗位数据，当前结果会优先按你的画像排序。`
+      : "当前使用内置岗位库。你可以导入 Boss Helper 导出的岗位数据进行筛选。";
+  }
+
   $("jobList").innerHTML = sortedJobs()
     .map((job) => `
       <article class="job-card ${job.index === getSelectedJobIndex() ? "selected" : ""}" data-job="${job.index}">
@@ -238,6 +260,142 @@ function bindStartPage() {
     localStorage.removeItem(analysisKey);
     window.location.href = "./loading.html";
   });
+}
+
+function normalizeJobRecord(record) {
+  if (!record || typeof record !== "object") return null;
+  const title = record.title || record.jobName || record.position || record.name;
+  if (!title) return null;
+  const skills = Array.isArray(record.skills)
+    ? record.skills
+    : String(record.skills || record.requirements || record.tags || "")
+        .split(/[,，/|;]/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+  const description = record.description || record.desc || record.summary || "";
+  const source = record.source || record.company || "Boss Helper 导入";
+  const city = record.city || record.location || "未标注";
+  return {
+    title,
+    source,
+    city,
+    tags: skills.slice(0, 4),
+    desc: description || `${title} · ${source}`,
+    advantage: record.advantage || "该岗位已从 Boss Helper 导入，可继续按学生画像筛选。",
+    risk: record.risk || "请检查岗位描述是否完整，必要时补齐工作内容和技能要求。",
+    gaps: skills.slice(0, 3).length ? skills.slice(0, 3) : ["关键词补全", "岗位说明", "职责边界"]
+  };
+}
+
+function parseImportedJobs(raw) {
+  const text = String(raw || "").trim();
+  if (!text) return [];
+
+  try {
+    const parsed = JSON.parse(text);
+    if (Array.isArray(parsed)) return parsed.map(normalizeJobRecord).filter(Boolean);
+    if (parsed && typeof parsed === "object") return [normalizeJobRecord(parsed)].filter(Boolean);
+  } catch {}
+
+  const lines = text.split(/\n+/).map((line) => line.trim()).filter(Boolean);
+  if (lines.length > 1 && lines.every((line) => line.includes(","))) {
+    const [headerLine, ...dataLines] = lines;
+    const headers = headerLine.split(",").map((item) => item.trim().toLowerCase());
+    return dataLines
+      .map((line) => {
+        const values = line.split(",").map((item) => item.trim());
+        const record = {};
+        headers.forEach((header, index) => {
+          record[header] = values[index] || "";
+        });
+        return normalizeJobRecord(record);
+      })
+      .filter(Boolean);
+  }
+
+  return lines
+    .map((line) => {
+      const [title, source, city, ...rest] = line.split(/\s{2,}|\t/);
+      return normalizeJobRecord({
+        title,
+        source,
+        city,
+        description: rest.join(" "),
+        skills: rest.join(" ")
+      });
+    })
+    .filter(Boolean);
+}
+
+function bindJobsIntegration() {
+  const input = $("jobImportInput");
+  const fileInput = $("jobFileInput");
+  const importBtn = $("importJobsBtn");
+  const sampleBtn = $("importSampleBtn");
+  const clearBtn = $("clearImportedJobsBtn");
+  const highMatchOnly = $("highMatchOnly");
+
+  const renderFromInput = () => {
+    const imported = parseImportedJobs(input.value);
+    setImportedJobs(imported);
+    renderJobs();
+  };
+
+  if (sampleBtn) {
+    sampleBtn.addEventListener("click", () => {
+      input.value = JSON.stringify(
+        [
+          {
+            title: "Boss Helper 精选 - AI 产品经理",
+            company: "Boss Helper",
+            city: "上海",
+            skills: "Agent, Prompt Engineering, 用户研究, PRD",
+            description: "从 Boss Helper 导出的精选岗位，适合产品和 AI 方向学生。",
+            source: "Boss Helper"
+          },
+          {
+            title: "Boss Helper 精选 - AI 应用开发",
+            company: "Boss Helper",
+            city: "杭州",
+            skills: "Python, FastAPI, Docker, LangGraph",
+            description: "偏工程实现与自动化工作流，适合 AI 应用开发方向。",
+            source: "Boss Helper"
+          }
+        ],
+        null,
+        2
+      );
+    });
+  }
+
+  if (importBtn) importBtn.addEventListener("click", renderFromInput);
+  if (clearBtn) clearBtn.addEventListener("click", () => {
+    input.value = "";
+    setImportedJobs([]);
+    renderJobs();
+  });
+  if (highMatchOnly) highMatchOnly.addEventListener("change", renderJobs);
+  if (input) input.addEventListener("input", () => {
+    if (!input.value.trim()) {
+      setImportedJobs([]);
+      renderJobs();
+    }
+  });
+
+  if (fileInput) {
+    fileInput.addEventListener("change", async () => {
+      const file = fileInput.files?.[0];
+      if (!file) return;
+      const text = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = () => resolve("");
+        reader.readAsText(file);
+      });
+      input.value = text;
+      renderFromInput();
+    });
+  }
 }
 
 function fileKind(file) {
@@ -374,4 +532,5 @@ function renderResultPage() {
 const page = getPage();
 if (page === "start") bindStartPage();
 if (page === "loading") bindLoadingPage();
+if (page === "jobs") bindJobsIntegration();
 if (["profile", "jobs", "resume", "roadmap"].includes(page)) renderResultPage();

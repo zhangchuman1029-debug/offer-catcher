@@ -477,6 +477,117 @@ input:focus {
   font-size: 32px;
 }
 
+.integration-panel {
+  margin-bottom: 18px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.48);
+  box-shadow: var(--soft-shadow);
+}
+
+.integration-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.integration-head h2 {
+  margin-bottom: 8px;
+  color: #1e4565;
+  font-size: 26px;
+}
+
+.integration-head p {
+  margin-bottom: 0;
+  color: #4e6d86;
+}
+
+.integration-actions,
+.integration-foot {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.integration-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.integration-field {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 0;
+  color: #42627f;
+}
+
+.integration-field textarea,
+.integration-field input {
+  width: 100%;
+}
+
+.integration-field.compact input {
+  height: 52px;
+}
+
+.integration-side {
+  display: grid;
+  gap: 14px;
+}
+
+.integration-tip {
+  padding: 16px;
+  border-radius: 22px;
+  background: rgba(236, 248, 255, 0.74);
+  color: #4e6d86;
+}
+
+.integration-tip strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #1e4565;
+}
+
+.integration-tip p {
+  margin-bottom: 8px;
+}
+
+.integration-tip p:last-child {
+  margin-bottom: 0;
+}
+
+.integration-foot {
+  justify-content: space-between;
+}
+
+.integration-status {
+  margin-top: 12px;
+  color: #3b987d;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.switch {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  color: #42627f;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.switch input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
 .score-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -797,6 +908,7 @@ ul {
   .input-grid,
   .upload-zone,
   .file-results,
+  .integration-grid,
   .score-grid,
   .gap-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -821,6 +933,7 @@ ul {
   .input-grid,
   .upload-zone,
   .file-results,
+  .integration-grid,
   .score-grid,
   .two-column,
   .job-card,

@@ -22,6 +22,7 @@ http://127.0.0.1:4173
 - `jobs.html`：岗位匹配结果页
 - `resume.html`：简历优化结果页
 - `roadmap.html`：成长路线结果页
+- `Boss Helper`：岗位导入入口在 `jobs.html`，可粘贴或上传 Boss Helper 导出的岗位数据
 - `styles.css`：界面样式
 - `app.js`：岗位库、匹配评分和交互逻辑
 - `offer-catcher-solution.md`：1000 字以内方案说明

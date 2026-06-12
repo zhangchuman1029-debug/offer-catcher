@@ -31,6 +31,48 @@
         </nav>
 
         <section class="tab-page active" id="jobs">
+          <section class="integration-panel">
+            <div class="integration-head">
+              <div>
+                <p class="eyebrow">Boss Helper 接入</p>
+                <h2>导入岗位并筛选</h2>
+                <p>把 Boss Helper 导出的 JSON、CSV、文本列表粘贴进来，或者直接上传文件，Offer 捕手会按你的画像重新排序。</p>
+              </div>
+              <div class="integration-actions">
+                <button class="ghost-action" id="importSampleBtn" type="button">载入示例数据</button>
+                <button class="ghost-action" id="clearImportedJobsBtn" type="button">清空导入</button>
+              </div>
+            </div>
+
+            <div class="integration-grid">
+              <label class="integration-field">
+                Boss Helper 数据
+                <textarea id="jobImportInput" rows="8" placeholder='支持 JSON 数组、JSON Lines、CSV，或每行一个岗位。'></textarea>
+              </label>
+
+              <div class="integration-side">
+                <label class="integration-field compact">
+                  上传岗位文件
+                  <input id="jobFileInput" type="file" accept=".json,.csv,.txt" />
+                </label>
+                <div class="integration-tip">
+                  <strong>建议格式</strong>
+                  <p>title, company, city, salary, skills, description</p>
+                  <p>导入后会自动生成岗位关键词并参与匹配排序。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="integration-foot">
+              <button class="primary-action" id="importJobsBtn" type="button">导入并筛选岗位</button>
+              <label class="switch">
+                <input id="highMatchOnly" type="checkbox" />
+                <span>只看高匹配岗位</span>
+              </label>
+            </div>
+            <div class="integration-status" id="importStatus">当前使用内置岗位库。</div>
+          </section>
+
           <div class="section-head">
             <p class="eyebrow">Stage 02</p>
             <h2>岗位库智能匹配</h2>
